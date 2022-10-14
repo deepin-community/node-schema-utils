@@ -1,0 +1,9 @@
+# Upgade from 2.x to 3.x
+
+API changed, replace
+
+  require("schema-utils")
+
+by
+
+  require("schema-utils").validate

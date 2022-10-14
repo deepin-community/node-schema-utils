@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+export NODE_ENV=production
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	node `nodepath ajv`/scripts/compile-dots.js `nodepath ajv`/lib ajv-errors/lib
+	babeljs-7 src -d dist --copy-files
+
+override_dh_install:
+	dh_install
+	# Workaround for #933841
+	cp ajv-errors/index.js debian/node-schema-utils/usr/share/nodejs/schema-utils/node_modules/ajv-errors
