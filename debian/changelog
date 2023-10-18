@@ -1,3 +1,29 @@
+node-schema-utils (3.1.1~ds-2) unstable; urgency=medium
+
+  * Team upload
+  * Add fix for jest >= 29 (Closes: #1021153)
+
+ -- Yadd <yadd@debian.org>  Mon, 03 Oct 2022 06:27:18 +0200
+
+node-schema-utils (3.1.1~ds-1) unstable; urgency=medium
+
+  * Team upload
+  * Add ctype=nodejs to component(s)
+  * Update standards version to 4.6.0, no changes needed
+  * Fix debian/watch:
+    * Fix GitHub tags regex
+    * Fix filenamemangle
+  * Drop dependency to nodejs
+  * Add webpack in test dependencies
+  * Drop component ajv-errors
+  * Exclude typescript declarations from import
+  * New upstream version 3.1.1~ds
+  * Build with tsc
+  * Update build dependencies: replace node-json-schema-traverse by
+    node-json-schema
+
+ -- Yadd <yadd@debian.org>  Tue, 23 Nov 2021 10:13:19 +0100
+
 node-schema-utils (3.0.0-3) unstable; urgency=medium
 
   * Team upload

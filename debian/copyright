@@ -2,18 +2,18 @@ Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: schema-utils
 Upstream-Contact: https://github.com/webpack-contrib/schema-utils/issues
 Source: https://github.com/webpack-contrib/schema-utils#readme
+Files-Excluded: declarations
+ .github
+ .gitignore
+ .husky
 
 Files: *
 Copyright: JS Foundation and other contributors
 License: Expat
 
-Files: ajv-errors/*
-Copyright: 2017 Evgeny Poberezkin
-License: Expat
-
 Files: debian/*
 Copyright: 2017 Pirate Praveen <praveen@debian.org>
- 2020 Xavier Guimard <yadd@debian.org>
+ 2020 Yadd <yadd@debian.org>
 License: Expat
 
 License: Expat
