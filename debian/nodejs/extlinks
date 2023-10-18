@@ -1,0 +1,3 @@
+ajv
+@types/json-schema
+@types/node

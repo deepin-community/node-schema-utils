@@ -1,0 +1,21 @@
+Description: declare old format for snapshots
+Author: Yadd <yadd@debian.org>
+Bug-Debian: https://bugs.debian.org/1021153
+Forwarded: no
+Last-Update: 2022-10-03
+
+--- a/package.json
++++ b/package.json
+@@ -74,5 +74,11 @@
+   },
+   "keywords": [
+     "webpack"
+-  ]
++  ],
++  "jest": {
++     "snapshotFormat": {
++       "escapeString": true,
++       "printBasicPrototype": true
++     }
++  }
+ }

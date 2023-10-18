@@ -1,16 +1,23 @@
-import { validate } from '../src';
+import webpackSchema from "webpack/schemas/WebpackOptions.json";
 
-import schema from './fixtures/schema.json';
+import { validate } from "../src";
 
-describe('Validation', () => {
-  function createSuccessTestCase(name, config, options = {}) {
+import schema from "./fixtures/schema.json";
+
+describe("Validation", () => {
+  function createSuccessTestCase(
+    name,
+    config,
+    options = {},
+    testSchema = schema
+  ) {
     it(`should pass validation for ${name}`, () => {
       let error;
 
       try {
-        validate(schema, config, options.name);
+        validate(testSchema, config, options.name);
       } catch (maybeValidationError) {
-        if (maybeValidationError.name !== 'ValidationError') {
+        if (maybeValidationError.name !== "ValidationError") {
           throw maybeValidationError;
         }
 
@@ -26,13 +33,13 @@ describe('Validation', () => {
       try {
         validate(schema, config, configuration);
       } catch (error) {
-        if (error.name !== 'ValidationError') {
+        if (error.name !== "ValidationError") {
           throw error;
         }
 
         expect(error.message).toMatch(
           new RegExp(
-            `^Invalid ${configuration.baseDataPath || 'configuration'} object`
+            `^Invalid ${configuration.baseDataPath || "configuration"} object`
           )
         );
         fn(error.message);
@@ -44,263 +51,263 @@ describe('Validation', () => {
     });
   }
 
-  createSuccessTestCase('empty array', {
+  createSuccessTestCase("empty array", {
     arrayType: [],
   });
 
-  createSuccessTestCase('non empty array', {
-    arrayType2: ['1', 2, true],
+  createSuccessTestCase("non empty array", {
+    arrayType2: ["1", 2, true],
   });
 
-  createSuccessTestCase('only additional items', {
-    onlyAdditionalItems: ['1', 2, true],
+  createSuccessTestCase("only additional items", {
+    onlyAdditionalItems: ["1", 2, true],
   });
 
-  createSuccessTestCase('boolean type', {
+  createSuccessTestCase("boolean type", {
     booleanType: true,
   });
 
-  createSuccessTestCase('number keywords without number type', {
+  createSuccessTestCase("number keywords without number type", {
     numberWithoutType: true,
   });
 
-  createSuccessTestCase('number keywords without number type #2', {
+  createSuccessTestCase("number keywords without number type #2", {
     numberWithoutType: 25,
   });
 
-  createSuccessTestCase('number keywords without number type #3', {
+  createSuccessTestCase("number keywords without number type #3", {
     numberWithoutType2: true,
   });
 
-  createSuccessTestCase('number keywords without number type #4', {
+  createSuccessTestCase("number keywords without number type #4", {
     numberWithoutType2: 20,
   });
 
-  createSuccessTestCase('string keywords without string type', {
+  createSuccessTestCase("string keywords without string type", {
     stringWithoutType: true,
   });
 
-  createSuccessTestCase('string keywords without string type', {
+  createSuccessTestCase("string keywords without string type", {
     stringWithoutType: 127,
   });
 
-  createSuccessTestCase('string keywords without string type #2', {
-    stringWithoutType: '127.0.0.1',
+  createSuccessTestCase("string keywords without string type #2", {
+    stringWithoutType: "127.0.0.1",
   });
 
-  createSuccessTestCase('array keywords without array type', {
+  createSuccessTestCase("array keywords without array type", {
     arrayWithoutType: true,
   });
 
-  createSuccessTestCase('array keywords without array type #2', {
-    arrayWithoutType: [1, 'test', true, false],
+  createSuccessTestCase("array keywords without array type #2", {
+    arrayWithoutType: [1, "test", true, false],
   });
 
-  createSuccessTestCase('array keywords without array type #3', {
-    arrayWithoutType: 'string',
+  createSuccessTestCase("array keywords without array type #3", {
+    arrayWithoutType: "string",
   });
 
-  createSuccessTestCase('object with required and properties', {
-    justAnObject: { foo: 'test', bar: 4, qwerty: 'qwerty' },
+  createSuccessTestCase("object with required and properties", {
+    justAnObject: { foo: "test", bar: 4, qwerty: "qwerty" },
   });
 
-  createSuccessTestCase('object with patternRequired', {
+  createSuccessTestCase("object with patternRequired", {
     objectTest4: { fao: true, fbo: true, c: true },
   });
 
-  createSuccessTestCase('array with items with true', {
-    itemsTrue: [1, 2, 3, 'test'],
+  createSuccessTestCase("array with items with true", {
+    itemsTrue: [1, 2, 3, "test"],
   });
 
-  createSuccessTestCase('empty const', {
-    emptyConst: '',
+  createSuccessTestCase("empty const", {
+    emptyConst: "",
   });
 
-  createSuccessTestCase('ref inside object inside allOf', {
+  createSuccessTestCase("ref inside object inside allOf", {
     refAndAnyOf: { foo: [/test/] },
   });
 
-  createSuccessTestCase('additionalProperties inside oneOf', {
+  createSuccessTestCase("additionalProperties inside oneOf", {
     additionalPropertiesInsideOneOf: { foo: 100 },
   });
 
-  createSuccessTestCase('additionalProperties inside oneOf #2', {
-    additionalPropertiesInsideOneOf2: { foo: 100, bar: 'baz' },
+  createSuccessTestCase("additionalProperties inside oneOf #2", {
+    additionalPropertiesInsideOneOf2: { foo: 100, bar: "baz" },
   });
 
-  createSuccessTestCase('single item in contains', {
-    singleContainsItems: [1, 'test', true],
+  createSuccessTestCase("single item in contains", {
+    singleContainsItems: [1, "test", true],
   });
 
-  createSuccessTestCase('array with contains', {
-    arrayKeyword17: [/test/, 1, 'test', true],
+  createSuccessTestCase("array with contains", {
+    arrayKeyword17: [/test/, 1, "test", true],
   });
 
-  createSuccessTestCase('const', {
-    constKeyword: 'foo',
+  createSuccessTestCase("const", {
+    constKeyword: "foo",
   });
 
-  createSuccessTestCase('const #2', {
-    constKeyword2: ['foo', 'bar'],
+  createSuccessTestCase("const #2", {
+    constKeyword2: ["foo", "bar"],
   });
 
-  createSuccessTestCase('const with array notation', {
+  createSuccessTestCase("const with array notation", {
     constWithArrayNotation: [1, 2, 3],
   });
 
-  createSuccessTestCase('const with object notation', {
-    constWithObjectNotation: { foo: 'bar', baz: 123 },
+  createSuccessTestCase("const with object notation", {
+    constWithObjectNotation: { foo: "bar", baz: 123 },
   });
 
-  createSuccessTestCase('items and additionalItems', {
+  createSuccessTestCase("items and additionalItems", {
     additionalItemsWithoutType: [1, 2, 3, 4, 5],
   });
 
-  createSuccessTestCase('items and additionalItems #2', {
+  createSuccessTestCase("items and additionalItems #2", {
     additionalItemsWithoutType2: [
       1,
       true,
       /test/,
-      'string',
+      "string",
       [1, 2, 3],
-      { foo: 'bar' },
+      { foo: "bar" },
       null,
     ],
   });
 
-  createSuccessTestCase('items and additionalItems #3', {
-    additionalItemsWithoutType3: ['string', 'other-string', 1, true, 2, false],
+  createSuccessTestCase("items and additionalItems #3", {
+    additionalItemsWithoutType3: ["string", "other-string", 1, true, 2, false],
   });
 
-  createSuccessTestCase('contains and additionalItems', {
-    containsAndAdditionalItems: [/test/, true, 'string'],
+  createSuccessTestCase("contains and additionalItems", {
+    containsAndAdditionalItems: [/test/, true, "string"],
   });
 
-  createSuccessTestCase('contains and additionalItems', {
-    containsAndAdditionalItems: [/test/, 1, 'string'],
+  createSuccessTestCase("contains and additionalItems", {
+    containsAndAdditionalItems: [/test/, 1, "string"],
   });
 
-  createSuccessTestCase('contains inside items', {
-    containsInsideItem: [1, 'test', true, /test/],
+  createSuccessTestCase("contains inside items", {
+    containsInsideItem: [1, "test", true, /test/],
   });
 
-  createSuccessTestCase('contains inside items #2', {
-    containsInsideItem: ['test', 'test', 'test'],
+  createSuccessTestCase("contains inside items #2", {
+    containsInsideItem: ["test", "test", "test"],
   });
 
-  createSuccessTestCase('contains inside items #3', {
-    containsInsideItem: [['test', 1], '1', /test/],
+  createSuccessTestCase("contains inside items #3", {
+    containsInsideItem: [["test", 1], "1", /test/],
   });
 
-  createSuccessTestCase('contains inside items #3', {
-    containsInsideItem: [[1, 'test'], '1', /test/],
+  createSuccessTestCase("contains inside items #3", {
+    containsInsideItem: [[1, "test"], "1", /test/],
   });
 
-  createSuccessTestCase('object without properties', {
+  createSuccessTestCase("object without properties", {
     emptyObject: {},
   });
 
-  createSuccessTestCase('non empty object', {
+  createSuccessTestCase("non empty object", {
     nonEmptyObject: { bar: 123 },
   });
 
-  createSuccessTestCase('non empty object #2', {
+  createSuccessTestCase("non empty object #2", {
     nonEmptyObject: {},
   });
 
-  createSuccessTestCase('non empty object #3', {
-    nonEmptyObject2: { foo: 'test' },
+  createSuccessTestCase("non empty object #3", {
+    nonEmptyObject2: { foo: "test" },
   });
 
-  createSuccessTestCase('oneOf', {
+  createSuccessTestCase("oneOf", {
     optimization: {
       runtimeChunk: {
-        name: 'fef',
+        name: "fef",
       },
     },
   });
 
-  createSuccessTestCase('not array', {
+  createSuccessTestCase("not array", {
     notArray: 1,
   });
 
-  createSuccessTestCase('no type like number with minimum', {
+  createSuccessTestCase("no type like number with minimum", {
     noTypeLikeNumberMinimum: 6,
   });
 
-  createSuccessTestCase('no type like number with minimum', {
+  createSuccessTestCase("no type like number with minimum", {
     noTypeLikeNumberMinimum: true,
   });
 
-  createSuccessTestCase('no type like number with maximum', {
+  createSuccessTestCase("no type like number with maximum", {
     noTypeLikeNumberMaximum: 4,
   });
 
-  createSuccessTestCase('no type like number with maximum', {
+  createSuccessTestCase("no type like number with maximum", {
     noTypeLikeNumberMaximum: true,
   });
 
-  createSuccessTestCase('no type like number with minimum', {
+  createSuccessTestCase("no type like number with minimum", {
     noTypeLikeNumberExclusiveMinimum: 6,
   });
 
-  createSuccessTestCase('no type like number with minimum', {
+  createSuccessTestCase("no type like number with minimum", {
     noTypeLikeNumberExclusiveMinimum: true,
   });
 
-  createSuccessTestCase('no type like number with maximum', {
+  createSuccessTestCase("no type like number with maximum", {
     noTypeLikeNumberExclusiveMaximum: 4,
   });
 
-  createSuccessTestCase('no type like number with maximum', {
+  createSuccessTestCase("no type like number with maximum", {
     noTypeLikeNumberExclusiveMaximum: true,
   });
 
-  createSuccessTestCase('no type like number with multipleOf', {
+  createSuccessTestCase("no type like number with multipleOf", {
     noTypeLikeNumberMultipleOf: true,
   });
 
-  createSuccessTestCase('no type like string with pattern', {
+  createSuccessTestCase("no type like string with pattern", {
     noTypeLikeStringPattern: 1,
   });
 
-  createSuccessTestCase('no type like string with pattern #2', {
-    noTypeLikeStringPattern: 'a',
+  createSuccessTestCase("no type like string with pattern #2", {
+    noTypeLikeStringPattern: "a",
   });
 
-  createSuccessTestCase('no type like string with MinLength equals 1', {
+  createSuccessTestCase("no type like string with MinLength equals 1", {
     noTypeLikeStringMinLength1: 1,
   });
 
-  createSuccessTestCase('no type like array with additionalItems', {
+  createSuccessTestCase("no type like array with additionalItems", {
     noTypeLikeArrayAdditionalItems: true,
   });
 
-  createSuccessTestCase('absolutePath', {
-    testAbsolutePath: '/directory/deep/tree',
+  createSuccessTestCase("absolutePath", {
+    testAbsolutePath: "/directory/deep/tree",
   });
 
-  createSuccessTestCase('absolutePath #1', {
-    testAbsolutePath: 'c:\\directory\\deep\\tree',
+  createSuccessTestCase("absolutePath #1", {
+    testAbsolutePath: "c:\\directory\\deep\\tree",
   });
 
-  createSuccessTestCase('absolutePath #2', {
-    testAbsolutePath: 'C:\\directory\\deep\\tree',
+  createSuccessTestCase("absolutePath #2", {
+    testAbsolutePath: "C:\\directory\\deep\\tree",
   });
 
-  createSuccessTestCase('absolutePath #3', {
-    testAbsolutePath: 'C:/directory/deep/tree',
+  createSuccessTestCase("absolutePath #3", {
+    testAbsolutePath: "C:/directory/deep/tree",
   });
 
-  createSuccessTestCase('absolutePath #4', {
-    testAbsolutePath: '\\\\server\\directory\\deep\\tree',
+  createSuccessTestCase("absolutePath #4", {
+    testAbsolutePath: "\\\\server\\directory\\deep\\tree",
   });
 
-  createSuccessTestCase('absolutePath #5', {
-    testAbsolutePath: '//server/directory/deep/tree',
+  createSuccessTestCase("absolutePath #5", {
+    testAbsolutePath: "//server/directory/deep/tree",
   });
 
-  createSuccessTestCase('$data', {
+  createSuccessTestCase("$data", {
     dollarData: {
       smaller: 5,
       larger: 7,
@@ -309,89 +316,89 @@ describe('Validation', () => {
 
   // The "name" option
   createFailedTestCase(
-    'webpack name',
+    "webpack name",
     {
-      entry: '',
+      entry: "",
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'Webpack',
+      name: "Webpack",
     }
   );
 
   createFailedTestCase(
-    'css-loader name',
+    "css-loader name",
     {
-      entry: '',
+      entry: "",
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'CSS Loader',
+      name: "CSS Loader",
     }
   );
 
   createFailedTestCase(
-    'terser-webpack-plugin name',
+    "terser-webpack-plugin name",
     {
-      entry: '',
+      entry: "",
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'Terser Plugin',
+      name: "Terser Plugin",
     }
   );
 
   // The "dataPath" option
   createFailedTestCase(
-    'configuration dataPath',
+    "configuration dataPath",
     {
-      entry: '',
+      entry: "",
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'Webpack',
-      baseDataPath: 'configuration',
+      name: "Webpack",
+      baseDataPath: "configuration",
     }
   );
 
   createFailedTestCase(
-    'configuration dataPath #1',
+    "configuration dataPath #1",
     {
-      entry: '',
+      entry: "",
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'MyPlugin',
-      baseDataPath: 'options',
+      name: "MyPlugin",
+      baseDataPath: "options",
     }
   );
 
   // The "postFormatter" option
   createFailedTestCase(
-    'postFormatter',
+    "postFormatter",
     {
       debug: true,
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'Webpack',
-      baseDataPath: 'configuration',
+      name: "Webpack",
+      baseDataPath: "configuration",
       postFormatter: (formattedError, error) => {
         if (
-          error.keyword === 'additionalProperties' &&
+          error.keyword === "additionalProperties" &&
           !error.dataPath &&
-          error.params.additionalProperty === 'debug'
+          error.params.additionalProperty === "debug"
         ) {
           return (
             `${formattedError}\n` +
             "The 'debug' property was removed in webpack 2.0.0.\n" +
-            'Loaders should be updated to allow passing this option via loader options in module.rules.\n' +
-            'Until loaders are updated one can use the LoaderOptionsPlugin to switch loaders into debug mode:\n' +
-            'plugins: [\n' +
-            '  new webpack.LoaderOptionsPlugin({\n' +
-            '    debug: true\n' +
-            '  })\n' +
-            ']'
+            "Loaders should be updated to allow passing this option via loader options in module.rules.\n" +
+            "Until loaders are updated one can use the LoaderOptionsPlugin to switch loaders into debug mode:\n" +
+            "plugins: [\n" +
+            "  new webpack.LoaderOptionsPlugin({\n" +
+            "    debug: true\n" +
+            "  })\n" +
+            "]"
           );
         }
 
@@ -401,34 +408,34 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'postFormatter #1',
+    "postFormatter #1",
     {
       minify: true,
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'Webpack',
-      baseDataPath: 'configuration',
+      name: "Webpack",
+      baseDataPath: "configuration",
       postFormatter: (formattedError, error) => {
         if (
-          error.keyword === 'additionalProperties' &&
+          error.keyword === "additionalProperties" &&
           !error.dataPath &&
           error.params.additionalProperty
         ) {
           return (
             `${formattedError}\n` +
-            'For typos: please correct them.\n' +
-            'For loader options: webpack >= v2.0.0 no longer allows custom properties in configuration.\n' +
-            '  Loaders should be updated to allow passing options via loader options in module.rules.\n' +
-            '  Until loaders are updated one can use the LoaderOptionsPlugin to pass these options to the loader:\n' +
-            '  plugins: [\n' +
-            '    new webpack.LoaderOptionsPlugin({\n' +
-            '      // test: /\\.xxx$/, // may apply this only for some modules\n' +
-            '      options: {\n' +
+            "For typos: please correct them.\n" +
+            "For loader options: webpack >= v2.0.0 no longer allows custom properties in configuration.\n" +
+            "  Loaders should be updated to allow passing options via loader options in module.rules.\n" +
+            "  Until loaders are updated one can use the LoaderOptionsPlugin to pass these options to the loader:\n" +
+            "  plugins: [\n" +
+            "    new webpack.LoaderOptionsPlugin({\n" +
+            "      // test: /\\.xxx$/, // may apply this only for some modules\n" +
+            "      options: {\n" +
             `        ${error.params.additionalProperty}: …\n` +
-            '      }\n' +
-            '    })\n' +
-            '  ]'
+            "      }\n" +
+            "    })\n" +
+            "  ]"
           );
         }
 
@@ -438,29 +445,29 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'postFormatter #2',
+    "postFormatter #2",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       output: {
-        filename: '/bar',
+        filename: "/bar",
       },
     },
     (msg) => expect(msg).toMatchSnapshot(),
     {
-      name: 'Webpack',
-      baseDataPath: 'configuration',
+      name: "Webpack",
+      baseDataPath: "configuration",
       postFormatter: (formattedError, error) => {
         if (
           error.children &&
           error.children.some(
             (child) =>
-              child.keyword === 'absolutePath' &&
-              child.dataPath === '.output.filename'
+              child.keyword === "absolutePath" &&
+              child.dataPath === ".output.filename"
           )
         ) {
           return (
             `${formattedError}\n` +
-            'Please use output.path to specify absolute path and output.filename for the file name.'
+            "Please use output.path to specify absolute path and output.filename for the file name."
           );
         }
 
@@ -470,24 +477,24 @@ describe('Validation', () => {
   );
 
   // eslint-disable-next-line no-undefined
-  createFailedTestCase('undefined configuration', undefined, (msg) =>
+  createFailedTestCase("undefined configuration", undefined, (msg) =>
     expect(msg).toMatchSnapshot()
   );
 
-  createFailedTestCase('null configuration', null, (msg) =>
+  createFailedTestCase("null configuration", null, (msg) =>
     expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'empty entry string',
+    "empty entry string",
     {
-      entry: '',
+      entry: "",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'empty entry bundle array',
+    "empty entry bundle array",
     {
       entry: {
         bundle: [],
@@ -497,9 +504,9 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'invalid instanceof',
+    "invalid instanceof",
     {
-      entry: 'a',
+      entry: "a",
       module: {
         wrappedContextRegExp: 1337,
       },
@@ -508,24 +515,24 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'invalid minimum',
+    "invalid minimum",
     {
-      entry: 'a',
+      entry: "a",
       parallelism: 0,
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'repeated value',
+    "repeated value",
     {
-      entry: ['abc', 'def', 'abc'],
+      entry: ["abc", "def", "abc"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'multiple errors',
+    "multiple errors",
     {
       entry: [/a/],
       output: {
@@ -536,13 +543,13 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'multiple configurations',
+    "multiple configurations",
     [
       {
         entry: [/a/],
       },
       {
-        entry: 'a',
+        entry: "a",
         output: {
           filename: /a/,
         },
@@ -552,15 +559,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'deep error',
+    "deep error",
     {
-      entry: 'a',
+      entry: "a",
       module: {
         rules: [
           {
             oneOf: [
               {
-                test: '/a',
+                test: "/a",
                 passer: {
                   amd: false,
                 },
@@ -574,18 +581,18 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additional key on root',
+    "additional key on root",
     {
-      entry: 'a',
+      entry: "a",
       postcss: () => {},
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'enum',
+    "enum",
     {
-      entry: 'a',
+      entry: "a",
       devtool: true,
     },
     (msg) => expect(msg).toMatchSnapshot()
@@ -593,44 +600,44 @@ describe('Validation', () => {
 
   // Require for integration with webpack
   createFailedTestCase(
-    '! in path',
+    "! in path",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       output: {
-        path: '/somepath/!test',
-        filename: 'bar',
+        path: "/somepath/!test",
+        filename: "bar",
       },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'relative path',
+    "relative path",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       output: {
-        filename: '/bar',
+        filename: "/bar",
       },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'absolute path',
+    "absolute path",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       output: {
-        filename: 'bar',
+        filename: "bar",
       },
-      context: 'baz',
+      context: "baz",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'missing stats option',
+    "missing stats option",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       stats: {
         foobar: true,
       },
@@ -638,75 +645,75 @@ describe('Validation', () => {
     (msg) => {
       expect(
         msg
-          .replace(/object \{ .* \}/g, 'object {...}')
+          .replace(/object \{ .* \}/g, "object {...}")
           .replace(/"none" \| .+/g, '"none" | ...')
       ).toMatchSnapshot();
     }
   );
 
   createFailedTestCase(
-    'invalid plugin provided: bool',
+    "invalid plugin provided: bool",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       plugins: [false],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'invalid plugin provided: array',
+    "invalid plugin provided: array",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       plugins: [[]],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'invalid plugin provided: string',
+    "invalid plugin provided: string",
     {
-      entry: 'foo.js',
-      plugins: ['abc123'],
+      entry: "foo.js",
+      plugins: ["abc123"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'Invalid plugin provided: int',
+    "Invalid plugin provided: int",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       plugins: [12],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'Invalid plugin provided: object without apply function',
+    "Invalid plugin provided: object without apply function",
     {
-      entry: 'foo.js',
+      entry: "foo.js",
       plugins: [{}],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'invalid mode',
+    "invalid mode",
     {
-      mode: 'protuction',
+      mode: "protuction",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'min length',
+    "min length",
     {
-      minLengthTwo: '1',
+      minLengthTwo: "1",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'min properties',
+    "min properties",
     {
       entry: {},
     },
@@ -714,31 +721,31 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer type',
+    "integer type",
     {
-      integerType: 'type',
+      integerType: "type",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'null type',
+    "null type",
     {
-      nullType: 'type',
+      nullType: "type",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'boolean type',
+    "boolean type",
     {
-      bail: 'true',
+      bail: "true",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array type',
+    "array type",
     {
       dependencies: {},
     },
@@ -746,15 +753,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'number type',
+    "number type",
     {
-      parallelism: '1',
+      parallelism: "1",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'object in object with anyOf',
+    "object in object with anyOf",
     {
       allOfRef: { alias: 123 },
     },
@@ -762,7 +769,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'non empty string in object with anyOf',
+    "non empty string in object with anyOf",
     {
       allOfRef: { aliasFields: 123 },
     },
@@ -770,7 +777,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'boolean and object in object with anyOf',
+    "boolean and object in object with anyOf",
     {
       allOfRef: { unsafeCache: [] },
     },
@@ -778,49 +785,49 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'boolean and number in object with anyOf',
+    "boolean and number in object with anyOf",
     {
-      watchOptions: { poll: '1' },
+      watchOptions: { poll: "1" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'integer and null in object with anyOf',
+    "integer and null in object with anyOf",
     {
-      customObject: { anyOfKeyword: '1' },
+      customObject: { anyOfKeyword: "1" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'maxLength',
+    "maxLength",
     {
-      customObject: { maxLength: '11111' },
+      customObject: { maxLength: "11111" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'maxItems',
+    "maxItems",
     {
-      customObject: { maxItems: ['1', '2', '3', '4'] },
+      customObject: { maxItems: ["1", "2", "3", "4"] },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'maxProperties',
+    "maxProperties",
     {
       customObject: {
-        maxProperties: { one: 'one', two: 'two', three: 'three', four: 'four' },
+        maxProperties: { one: "one", two: "two", three: "three", four: "four" },
       },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'minimum',
+    "minimum",
     {
       customObject: { minimumKeyword: 1 },
     },
@@ -828,7 +835,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'maximum',
+    "maximum",
     {
       customObject: { maximumKeyword: 11111 },
     },
@@ -836,7 +843,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'multipleOf',
+    "multipleOf",
     {
       customObject: { multipleOfKeyword: 11111 },
     },
@@ -844,31 +851,31 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'pattern',
+    "pattern",
     {
-      customObject: { patternKeyword: 'def' },
+      customObject: { patternKeyword: "def" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'format',
+    "format",
     {
-      customObject: { formatKeyword: 'def' },
+      customObject: { formatKeyword: "def" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'contains',
+    "contains",
     {
-      customObject: { containsKeyword: ['def'] },
+      customObject: { containsKeyword: ["def"] },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'contains #1',
+    "contains #1",
     {
       multipleContains2: [/test/],
     },
@@ -876,7 +883,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'oneOf #1',
+    "oneOf #1",
     {
       entry: { foo: () => [] },
     },
@@ -884,7 +891,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'oneOf #2',
+    "oneOf #2",
     {
       optimization: {
         runtimeChunk: {
@@ -896,7 +903,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'oneOf #3',
+    "oneOf #3",
     {
       optimization: {
         runtimeChunk: (name) => name,
@@ -906,7 +913,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'allOf',
+    "allOf",
     {
       objectType: { objectProperty: 1 },
     },
@@ -914,7 +921,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'anyOf',
+    "anyOf",
     {
       anyOfKeyword: true,
     },
@@ -922,7 +929,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array without items',
+    "array without items",
     {
       nestedArrayWithoutItems: true,
     },
@@ -930,7 +937,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object without items',
+    "object without items",
     {
       nestedObjectWithoutItems: true,
     },
@@ -938,15 +945,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'multiple types in array',
+    "multiple types in array",
     {
-      arrayType2: ['1', 2, true, /test/],
+      arrayType2: ["1", 2, true, /test/],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'multiple types',
+    "multiple types",
     {
       multipleTypes: /test/,
     },
@@ -954,7 +961,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'zero max items',
+    "zero max items",
     {
       zeroMaxItems: [1],
     },
@@ -962,7 +969,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'multiple types in contains',
+    "multiple types in contains",
     {
       multipleContains: [/test/],
     },
@@ -970,7 +977,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'exclusiveMinimum',
+    "exclusiveMinimum",
     {
       exclusiveMinimumKeyword: 4.5,
     },
@@ -978,7 +985,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'exclusiveMaximum',
+    "exclusiveMaximum",
     {
       exclusiveMaximumKeyword: 5.5,
     },
@@ -986,7 +993,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'uniqueItems',
+    "uniqueItems",
     {
       uniqueItemsKeyword: [1, 2, 1],
     },
@@ -994,23 +1001,23 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'minProperties',
+    "minProperties",
     {
-      minPropertiesKeyword: { foo: 'bar' },
+      minPropertiesKeyword: { foo: "bar" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'maxProperties',
+    "maxProperties",
     {
-      maxPropertiesKeyword: { foo: 'bar', bar: 'foo', foobaz: 'foobaz' },
+      maxPropertiesKeyword: { foo: "bar", bar: "foo", foobaz: "foobaz" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'required',
+    "required",
     {
       requiredKeyword: {},
     },
@@ -1018,7 +1025,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'required #2',
+    "required #2",
     {
       requiredKeyword: { b: 1 },
     },
@@ -1026,7 +1033,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'required with additionalProperties',
+    "required with additionalProperties",
     {
       requiredKeywordWithAdditionalProperties: { b: 1 },
     },
@@ -1034,7 +1041,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'enum',
+    "enum",
     {
       enumKeyword: 1,
     },
@@ -1042,79 +1049,79 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'formatMinimum',
+    "formatMinimum",
     {
-      formatMinimumKeyword: '2016-02-05',
+      formatMinimumKeyword: "2016-02-05",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'formatMaximum',
+    "formatMaximum",
     {
-      formatMaximumKeyword: '2016-02-07',
+      formatMaximumKeyword: "2016-02-07",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'formatExclusiveMinimum',
+    "formatExclusiveMinimum",
     {
-      formatExclusiveMinimumKeyword: '2016-02-06',
+      formatExclusiveMinimumKeyword: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'formatExclusiveMaximum',
+    "formatExclusiveMaximum",
     {
-      formatExclusiveMaximumKeyword: '2016-02-06',
+      formatExclusiveMaximumKeyword: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'format and formatMinimum and formatMaximum and formatExclusiveMaximum',
+    "format and formatMinimum and formatMaximum and formatExclusiveMaximum",
     {
-      formatMinMaxExclusiveMinKeyword: '2016-02-05',
+      formatMinMaxExclusiveMinKeyword: "2016-02-05",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'format and formatMinimum and formatMaximum and formatExclusiveMaximum',
+    "format and formatMinimum and formatMaximum and formatExclusiveMaximum",
     {
-      formatMinMaxExclusiveMaxKeyword: '2016-02-05',
+      formatMinMaxExclusiveMaxKeyword: "2016-02-05",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'minItems Keyword',
+    "minItems Keyword",
     {
-      minItemsKeyword: ['1'],
+      minItemsKeyword: ["1"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'maxItems Keyword',
+    "maxItems Keyword",
     {
-      maxItemsKeyword: ['1', '2', '3', '4'],
+      maxItemsKeyword: ["1", "2", "3", "4"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'items',
+    "items",
     {
-      itemsKeyword: ['1'],
+      itemsKeyword: ["1"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'items',
+    "items",
     {
       itemsKeyword2: [true],
     },
@@ -1122,39 +1129,39 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalItems',
+    "additionalItems",
     {
-      additionalItemsKeyword: [1, 'abc'],
+      additionalItemsKeyword: [1, "abc"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'additionalItems #2',
+    "additionalItems #2",
     {
-      additionalItemsKeyword2: ['abc'],
+      additionalItemsKeyword2: ["abc"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'additionalItems #3',
+    "additionalItems #3",
     {
-      additionalItemsKeyword3: ['abc'],
+      additionalItemsKeyword3: ["abc"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'additionalItems #4',
+    "additionalItems #4",
     {
-      additionalItemsKeyword4: [1, 1, 'foo'],
+      additionalItemsKeyword4: [1, 1, "foo"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'properties',
+    "properties",
     {
       propertiesKeyword: { foo: 1 },
     },
@@ -1162,7 +1169,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'patternProperties',
+    "patternProperties",
     {
       patternPropertiesKeyword: { foo: 1 },
     },
@@ -1170,23 +1177,23 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'patternProperties #1',
+    "patternProperties #1",
     {
-      patternPropertiesKeyword2: { b: 't' },
+      patternPropertiesKeyword2: { b: "t" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array with only number',
+    "array with only number",
     {
-      arrayWithOnlyNumber: ['foo'],
+      arrayWithOnlyNumber: ["foo"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'only required',
+    "only required",
     {
       onlyRequired: {},
     },
@@ -1194,7 +1201,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'dependencies',
+    "dependencies",
     {
       dependenciesKeyword: { foo: 1, bar: 2 },
     },
@@ -1202,15 +1209,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'dependencies #2',
+    "dependencies #2",
     {
-      dependenciesKeyword2: { foo: 1, bar: '2' },
+      dependenciesKeyword2: { foo: 1, bar: "2" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'patternRequired',
+    "patternRequired",
     {
       patternRequiredKeyword: { bar: 2 },
     },
@@ -1218,7 +1225,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'patternRequired #2',
+    "patternRequired #2",
     {
       patternRequiredKeyword2: { foo: 1 },
     },
@@ -1226,7 +1233,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'only properties',
+    "only properties",
     {
       onlyProperties: { foo: 1 },
     },
@@ -1234,31 +1241,31 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'only properties #2',
+    "only properties #2",
     {
-      onlyProperties2: { foo: 'a', bar: 2, break: 'test' },
+      onlyProperties2: { foo: "a", bar: 2, break: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'only items',
+    "only items",
     {
-      onlyItems: [1, 'abc'],
+      onlyItems: [1, "abc"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'only items #2',
+    "only items #2",
     {
-      onlyItems2: ['abc', 1],
+      onlyItems2: ["abc", 1],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'additionalProperties',
+    "additionalProperties",
     {
       additionalPropertiesKeyword: { a: 3 },
     },
@@ -1266,7 +1273,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalProperties #2',
+    "additionalProperties #2",
     {
       additionalPropertiesKeyword: { foo: 1, baz: 3 },
     },
@@ -1274,15 +1281,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalProperties #3',
+    "additionalProperties #3",
     {
-      additionalPropertiesKeyword: { foo: '1', baz: 3 },
+      additionalPropertiesKeyword: { foo: "1", baz: 3 },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'additionalProperties #4',
+    "additionalProperties #4",
     {
       additionalPropertiesKeyword2: { a: 3 },
     },
@@ -1290,7 +1297,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalProperties #5',
+    "additionalProperties #5",
     {
       additionalPropertiesKeyword2: { foo: 1, baz: 3 },
     },
@@ -1298,39 +1305,39 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalProperties #6',
+    "additionalProperties #6",
     {
-      additionalPropertiesKeyword2: { foo: 1, bar: '3' },
+      additionalPropertiesKeyword2: { foo: 1, bar: "3" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'propertyNames',
+    "propertyNames",
     {
-      propertyNamesKeyword: { foo: 'any value' },
+      propertyNamesKeyword: { foo: "any value" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'constKeyword',
+    "constKeyword",
     {
-      constKeyword: 'bar',
+      constKeyword: "bar",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'constKeyword #2',
+    "constKeyword #2",
     {
-      constKeyword2: 'baz',
+      constKeyword2: "baz",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'if/then/else',
+    "if/then/else",
     {
       ifThenElseKeyword: { power: 10000 },
     },
@@ -1338,7 +1345,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'if/then/else #2',
+    "if/then/else #2",
     {
       ifThenElseKeyword: { power: 10000, confidence: true },
     },
@@ -1346,7 +1353,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'if/then/else #3',
+    "if/then/else #3",
     {
       ifThenElseKeyword: { power: 1000 },
     },
@@ -1354,7 +1361,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'if/then/else #4',
+    "if/then/else #4",
     {
       ifThenElseKeyword2: 11,
     },
@@ -1362,7 +1369,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'if/then/else #5',
+    "if/then/else #5",
     {
       ifThenElseKeyword2: 2000,
     },
@@ -1370,7 +1377,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'if/then/else #6',
+    "if/then/else #6",
     {
       ifThenElseKeyword2: 0,
     },
@@ -1378,63 +1385,71 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'string',
+    "string",
     {
-      stringKeyword: '2016-02-06',
+      stringKeyword: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'string #1',
+    "string #1",
     {
-      stringKeyword: 'abc',
+      stringKeyword: "abc",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array',
+    "string with link",
     {
-      arrayKeyword: 'abc',
+      stringKeywordWithLink: "abc",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #1',
+    "array",
     {
-      arrayKeyword: ['abc'],
+      arrayKeyword: "abc",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #2',
+    "array #1",
     {
-      arrayKeyword: [1, 'string', 1],
+      arrayKeyword: ["abc"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #3',
+    "array #2",
     {
-      arrayKeyword: [1, 'string', '1', 'other', 'foo'],
+      arrayKeyword: [1, "string", 1],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #4',
+    "array #3",
     {
-      arrayKeyword2: [1, '1', 1],
+      arrayKeyword: [1, "string", "1", "other", "foo"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #5',
+    "array #4",
+    {
+      arrayKeyword2: [1, "1", 1],
+    },
+    (msg) => expect(msg).toMatchSnapshot()
+  );
+
+  createFailedTestCase(
+    "array #5",
     {
       arrayKeyword2: [1, 2, true, false],
     },
@@ -1442,23 +1457,23 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #4',
+    "array #4",
     {
-      arrayKeyword3: ['1', '2', '3'],
+      arrayKeyword3: ["1", "2", "3"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #5',
+    "array #5",
     {
-      arrayKeyword3: [1, '1', 1],
+      arrayKeyword3: [1, "1", 1],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #6',
+    "array #6",
     {
       arrayKeyword3: [1, 2, true, false],
     },
@@ -1466,7 +1481,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #7',
+    "array #7",
     {
       arrayKeyword4: true,
     },
@@ -1474,7 +1489,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #8',
+    "array #8",
     {
       arrayKeyword5: [1],
     },
@@ -1482,7 +1497,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #9',
+    "array #9",
     {
       arrayKeyword6: [1],
     },
@@ -1490,39 +1505,39 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #10',
+    "array #10",
     {
-      arrayKeyword6: ['true', '1'],
+      arrayKeyword6: ["true", "1"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #11',
+    "array #11",
     {
-      arrayKeyword6: [true, '1'],
+      arrayKeyword6: [true, "1"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #12',
+    "array #12",
     {
-      arrayKeyword7: ['test', 1, /test/],
+      arrayKeyword7: ["test", 1, /test/],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #13',
+    "array #13",
     {
-      arrayKeyword8: ['test', 1, 'test', true],
+      arrayKeyword8: ["test", 1, "test", true],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array #14',
+    "array #14",
     {
       arrayKeyword8: true,
     },
@@ -1530,7 +1545,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #15',
+    "array #15",
     {
       arrayKeyword9: true,
     },
@@ -1538,7 +1553,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #16',
+    "array #16",
     {
       arrayKeyword10: true,
     },
@@ -1546,7 +1561,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #17',
+    "array #17",
     {
       arrayKeyword11: true,
     },
@@ -1554,7 +1569,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #18',
+    "array #18",
     {
       arrayKeyword12: true,
     },
@@ -1562,7 +1577,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #19',
+    "array #19",
     {
       arrayKeyword13: true,
     },
@@ -1570,7 +1585,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #20',
+    "array #20",
     {
       arrayKeyword14: true,
     },
@@ -1578,7 +1593,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #21',
+    "array #21",
     {
       arrayKeyword15: true,
     },
@@ -1586,7 +1601,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #22',
+    "array #22",
     {
       arrayKeyword16: true,
     },
@@ -1594,7 +1609,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #23',
+    "array #23",
     {
       arrayKeyword17: true,
     },
@@ -1602,7 +1617,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #24',
+    "array #24",
     {
       arrayKeyword17: [1, /test/, () => {}],
     },
@@ -1610,7 +1625,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #25',
+    "array #25",
     {
       arrayKeyword18: [1, 2, 3],
     },
@@ -1618,7 +1633,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array #26',
+    "array #26",
     {
       arrayKeyword19: true,
     },
@@ -1626,21 +1641,21 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'recursion',
+    "recursion",
     {
-      recursion: { person: { name: 'Foo', children: {} } },
+      recursion: { person: { name: "Foo", children: {} } },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'extending',
+    "extending",
     {
       extending: {
         shipping_address: {
-          street_address: '1600 Pennsylvania Avenue NW',
-          city: 'Washington',
-          state: 'DC',
+          street_address: "1600 Pennsylvania Avenue NW",
+          city: "Washington",
+          state: "DC",
         },
       },
     },
@@ -1648,7 +1663,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'module',
+    "module",
     {
       module: { rules: [{ compiler: true }] },
     },
@@ -1656,7 +1671,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array with string items and minLength',
+    "array with string items and minLength",
     {
       longString: true,
     },
@@ -1664,7 +1679,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer equals to 5',
+    "integer equals to 5",
     {
       integerEqualsTo5: 6,
     },
@@ -1672,7 +1687,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer with minimum',
+    "integer with minimum",
     {
       integerWithMinimum: true,
     },
@@ -1680,7 +1695,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer with minimum and maximum',
+    "integer with minimum and maximum",
     {
       integerWithMinimum: 1,
     },
@@ -1688,7 +1703,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer with exclusive minimum',
+    "integer with exclusive minimum",
     {
       integerWithExclusiveMinimum: true,
     },
@@ -1696,7 +1711,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer with exclusive minimum',
+    "integer with exclusive minimum",
     {
       integerWithExclusiveMinimum: 1,
     },
@@ -1704,7 +1719,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer with exclusive maximum',
+    "integer with exclusive maximum",
     {
       integerWithExclusiveMaximum: true,
     },
@@ -1712,7 +1727,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer with exclusive maximum',
+    "integer with exclusive maximum",
     {
       integerWithExclusiveMaximum: 1,
     },
@@ -1720,7 +1735,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'number with minimum and maximum',
+    "number with minimum and maximum",
     {
       numberWithMinimum: true,
     },
@@ -1728,7 +1743,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'multipleOf with minimum and maximum',
+    "multipleOf with minimum and maximum",
     {
       multipleOfProp: true,
     },
@@ -1736,7 +1751,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'string with minLength, maxLength and pattern',
+    "string with minLength, maxLength and pattern",
     {
       stringWithMinAndMaxLength: true,
     },
@@ -1744,15 +1759,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'string with minLength and maxLength',
+    "string with minLength and maxLength",
     {
-      stringWithMinAndMaxLength: 'def',
+      stringWithMinAndMaxLength: "def",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'format, formatMaximum and formatExclusiveMaximum',
+    "format, formatMaximum and formatExclusiveMaximum",
     {
       strictFormat: true,
     },
@@ -1760,15 +1775,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'format, formatMaximum and formatExclusiveMaximum #2',
+    "format, formatMaximum and formatExclusiveMaximum #2",
     {
-      strictFormat: '2016-02-07',
+      strictFormat: "2016-02-07",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'format, formatMinimum and formatExclusiveMinimum',
+    "format, formatMinimum and formatExclusiveMinimum",
     {
       strictFormat2: true,
     },
@@ -1776,15 +1791,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'format, formatMinimum and formatExclusiveMinimum #2',
+    "format, formatMinimum and formatExclusiveMinimum #2",
     {
-      strictFormat2: '2016-02-06',
+      strictFormat2: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'uniqueItems',
+    "uniqueItems",
     {
       uniqueItemsProp: true,
     },
@@ -1792,7 +1807,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'uniqueItems #2',
+    "uniqueItems #2",
     {
       uniqueItemsProp: [1, 1],
     },
@@ -1800,7 +1815,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'maxProperties and minProperties',
+    "maxProperties and minProperties",
     {
       maxPropertiesAndMinProperties: true,
     },
@@ -1808,7 +1823,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'maxProperties and minProperties #2',
+    "maxProperties and minProperties #2",
     {
       maxPropertiesAndMinProperties: {},
     },
@@ -1816,7 +1831,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'maxProperties and minProperties #3',
+    "maxProperties and minProperties #3",
     {
       maxPropertiesAndMinProperties: { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 },
     },
@@ -1824,7 +1839,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object',
+    "object",
     {
       objectTest: true,
     },
@@ -1832,7 +1847,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #2',
+    "object #2",
     {
       objectTest2: true,
     },
@@ -1840,7 +1855,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #3',
+    "object #3",
     {
       objectTest3: true,
     },
@@ -1848,7 +1863,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #4',
+    "object #4",
     {
       objectTest4: true,
     },
@@ -1856,27 +1871,27 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #5',
+    "object #5",
     {
-      objectTest4: { foo: 'test', b: 'test' },
+      objectTest4: { foo: "test", b: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'object #6',
+    "object #6",
     {
       objectTest5: {
-        'foo@gmail.com.com': 1,
-        'foo1@bar.com': 1,
-        'foo@bar.com': 1,
+        "foo@gmail.com.com": 1,
+        "foo1@bar.com": 1,
+        "foo@bar.com": 1,
       },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'object #7',
+    "object #7",
     {
       objectTest5: true,
     },
@@ -1884,7 +1899,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #8',
+    "object #8",
     {
       objectTest6: true,
     },
@@ -1892,7 +1907,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #9',
+    "object #9",
     {
       objectTest7: true,
     },
@@ -1900,7 +1915,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #9',
+    "object #9",
     {
       objectTest8: true,
     },
@@ -1908,15 +1923,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #10',
+    "object #10",
     {
-      objectTest7: { baz: 'test' },
+      objectTest7: { baz: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'object #11',
+    "object #11",
     {
       objectTest9: true,
     },
@@ -1924,15 +1939,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object #12',
+    "object #12",
     {
-      objectTest9: { foo: 'test', baz: 'test', bar: 1 },
+      objectTest9: { foo: "test", baz: "test", bar: 1 },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'string with empty pattern',
+    "string with empty pattern",
     {
       stringWithEmptyPattern: true,
     },
@@ -1940,15 +1955,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array keywords without array type',
+    "array keywords without array type",
     {
-      likeArray: ['test'],
+      likeArray: ["test"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array with empty items, empty additionalItems, empty contains',
+    "array with empty items, empty additionalItems, empty contains",
     {
       arrayWithEmptyItemsAndEmptyAdditionalItemsAndEmptyContains: true,
     },
@@ -1956,63 +1971,63 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalItems with false',
+    "additionalItems with false",
     {
-      additionalItemsFalse: [1, 1, 'foo'],
+      additionalItemsFalse: [1, 1, "foo"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'required without object type',
+    "required without object type",
     {
-      requiredWithoutType: { b: 'test' },
+      requiredWithoutType: { b: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'dependencies without object type',
+    "dependencies without object type",
     {
-      dependenciesWithoutType: { foo: 'test' },
+      dependenciesWithoutType: { foo: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'propertyNames without object type',
+    "propertyNames without object type",
     {
-      propertyNamesWithoutType: { foo: 'test' },
+      propertyNamesWithoutType: { foo: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'patternRequired without object type',
+    "patternRequired without object type",
     {
-      patternRequiredWithoutType: { boo: 'test' },
+      patternRequiredWithoutType: { boo: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'additionalProperties without object type',
+    "additionalProperties without object type",
     {
-      additionalPropertiesWithoutType: { boo: 'test' },
+      additionalPropertiesWithoutType: { boo: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'maxProperties without object type',
+    "maxProperties without object type",
     {
-      maxPropertiesWithoutType: { boo: 'test' },
+      maxPropertiesWithoutType: { boo: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'object with required and properties',
+    "object with required and properties",
     {
       justAnObject: true,
     },
@@ -2020,7 +2035,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array with absolutePath item',
+    "array with absolutePath item",
     {
       arrayWithAbsolutePath: true,
     },
@@ -2028,7 +2043,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'allOf',
+    "allOf",
     {
       allOfKeyword: true,
     },
@@ -2036,7 +2051,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'allOf #1',
+    "allOf #1",
     {
       allOfKeyword: 4.5,
     },
@@ -2044,7 +2059,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'allOf #2',
+    "allOf #2",
     {
       allOfKeyword: 5,
     },
@@ -2052,31 +2067,31 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'oneOf with description',
+    "oneOf with description",
     {
-      oneOfnumberAndDescriptionAndArray: '2016-02-06',
+      oneOfnumberAndDescriptionAndArray: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'number and description',
+    "number and description",
     {
-      numberAndDescription: '2016-02-06',
+      numberAndDescription: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'const with description',
+    "const with description",
     {
-      constWithDescription: '2016-02-06',
+      constWithDescription: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array with items with true',
+    "array with items with true",
     {
       itemsTrue: true,
     },
@@ -2084,7 +2099,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'empty const',
+    "empty const",
     {
       emptyConst: true,
     },
@@ -2092,7 +2107,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'one const',
+    "one const",
     {
       oneConst: true,
     },
@@ -2100,7 +2115,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'const with empty string',
+    "const with empty string",
     {
       constWithEmptyString: true,
     },
@@ -2108,7 +2123,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'ref inside object inside allOf',
+    "ref inside object inside allOf",
     {
       refAndAnyOf: {},
     },
@@ -2116,7 +2131,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalProperties inside oneOf',
+    "additionalProperties inside oneOf",
     {
       additionalPropertiesInsideOneOf: true,
     },
@@ -2124,15 +2139,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'additionalProperties inside oneOf #2',
+    "additionalProperties inside oneOf #2",
     {
-      additionalPropertiesInsideOneOf: { foo: 100, bar: 'test' },
+      additionalPropertiesInsideOneOf: { foo: 100, bar: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'additionalProperties inside oneOf #3',
+    "additionalProperties inside oneOf #3",
     {
       additionalPropertiesInsideOneOf2: true,
     },
@@ -2140,7 +2155,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'single item in contains',
+    "single item in contains",
     {
       singleContainsItems: true,
     },
@@ -2148,7 +2163,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object with dependencies',
+    "object with dependencies",
     {
       objectWithPropertyDependency: true,
     },
@@ -2156,7 +2171,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object with dependencies #2',
+    "object with dependencies #2",
     {
       objectWithPropertyDependency2: true,
     },
@@ -2164,7 +2179,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object with dependencies #3',
+    "object with dependencies #3",
     {
       objectWithPropertyDependency3: true,
     },
@@ -2172,7 +2187,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object with dependencies #4',
+    "object with dependencies #4",
     {
       objectWithPropertyDependency4: true,
     },
@@ -2180,7 +2195,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'oneOf with if',
+    "oneOf with if",
     {
       oneOfWithIf: true,
     },
@@ -2188,7 +2203,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'const with array notation',
+    "const with array notation",
     {
       constWithArrayNotation: true,
     },
@@ -2196,7 +2211,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'const with object notation',
+    "const with object notation",
     {
       constWithObjectNotation: true,
     },
@@ -2204,7 +2219,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'items and additionalItems',
+    "items and additionalItems",
     {
       additionalItemsWithoutType: true,
     },
@@ -2212,7 +2227,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'items and additionalItems #2',
+    "items and additionalItems #2",
     {
       additionalItemsWithoutType2: true,
     },
@@ -2220,7 +2235,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'items and additionalItems #3',
+    "items and additionalItems #3",
     {
       additionalItemsWithoutType3: true,
     },
@@ -2228,7 +2243,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'contains and additionalItems',
+    "contains and additionalItems",
     {
       containsAndAdditionalItems: true,
     },
@@ -2236,15 +2251,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'contains and additionalItems #2',
+    "contains and additionalItems #2",
     {
-      containsAndAdditionalItems: [/test/, 'string'],
+      containsAndAdditionalItems: [/test/, "string"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'contains inside items',
+    "contains inside items",
     {
       containsInsideItem: true,
     },
@@ -2252,15 +2267,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'contains inside items #2',
+    "contains inside items #2",
     {
-      containsInsideItem: [['test'], '1', /test/],
+      containsInsideItem: [["test"], "1", /test/],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'empty object',
+    "empty object",
     {
       emptyObject: true,
     },
@@ -2268,15 +2283,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'empty object #2',
+    "empty object #2",
     {
-      emptyObject: { a: 'test' },
+      emptyObject: { a: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'non empty object',
+    "non empty object",
     {
       nonEmptyObject: true,
     },
@@ -2284,7 +2299,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'non empty object #2',
+    "non empty object #2",
     {
       nonEmptyObject2: true,
     },
@@ -2292,22 +2307,22 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'holey array',
+    "holey array",
     // eslint-disable-next-line no-sparse-arrays
     [
       {
-        mode: 'production',
+        mode: "production",
       },
       ,
       {
-        mode: 'development',
+        mode: "development",
       },
     ],
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'missing cache group name',
+    "missing cache group name",
     {
       optimization: {
         splitChunks: {
@@ -2321,7 +2336,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not enum',
+    "not enum",
     {
       notEnum: 2,
     },
@@ -2329,23 +2344,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not const',
+    "not const",
     {
-      notConst: 'foo',
+      notConst: "foo",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'not number',
-    {
-      notNumber: 1,
-    },
-    (msg) => expect(msg).toMatchSnapshot()
-  );
-
-  createFailedTestCase(
-    'not integer',
+    "not number",
     {
       notNumber: 1,
     },
@@ -2353,15 +2360,23 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not string',
+    "not integer",
     {
-      notString: 'test',
+      notNumber: 1,
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'not boolean',
+    "not string",
+    {
+      notString: "test",
+    },
+    (msg) => expect(msg).toMatchSnapshot()
+  );
+
+  createFailedTestCase(
+    "not boolean",
     {
       notBoolean: true,
     },
@@ -2369,7 +2384,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not array',
+    "not array",
     {
       notArray: [1, 2, 3],
     },
@@ -2377,15 +2392,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not object',
+    "not object",
     {
-      notObject: { foo: 'test' },
+      notObject: { foo: "test" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'not null',
+    "not null",
     {
       notNull: null,
     },
@@ -2393,7 +2408,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not not null',
+    "not not null",
     {
       notNotNull: 1,
     },
@@ -2401,7 +2416,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not not not null',
+    "not not not null",
     {
       NotNotNotNull: null,
     },
@@ -2409,7 +2424,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not not not null',
+    "not not not null",
     {
       notMultipleTypes: 1,
     },
@@ -2417,7 +2432,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'not array less than 3 items',
+    "not array less than 3 items",
     {
       notMaxItemsArray: [1, 2],
     },
@@ -2425,7 +2440,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like number with minimum',
+    "no type like number with minimum",
     {
       noTypeLikeNumberMinimum: 4,
     },
@@ -2433,7 +2448,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like number with maximum',
+    "no type like number with maximum",
     {
       noTypeLikeNumberMaximum: 6,
     },
@@ -2441,7 +2456,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like number with exclusive minimum',
+    "no type like number with exclusive minimum",
     {
       noTypeLikeNumberExclusiveMinimum: 4,
     },
@@ -2449,7 +2464,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like number with exclusive maximum',
+    "no type like number with exclusive maximum",
     {
       noTypeLikeNumberExclusiveMaximum: 6,
     },
@@ -2457,7 +2472,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'minimum with type number',
+    "minimum with type number",
     {
       minimumWithTypeNumber: 4,
     },
@@ -2465,7 +2480,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'maximum with type number',
+    "maximum with type number",
     {
       maximumWithTypeNumber: 6,
     },
@@ -2473,7 +2488,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'exclusive minimum with type number',
+    "exclusive minimum with type number",
     {
       exclusiveMinimumWithTypeNumber: 4,
     },
@@ -2481,7 +2496,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'exclusive maximum with type number',
+    "exclusive maximum with type number",
     {
       exclusiveMaximumWithTypeNumber: 6,
     },
@@ -2489,7 +2504,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like number with multipleOf',
+    "no type like number with multipleOf",
     {
       noTypeLikeNumberMultipleOf: 1,
     },
@@ -2497,7 +2512,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'multipleOf with type number',
+    "multipleOf with type number",
     {
       multipleOfWithNumberType: 1,
     },
@@ -2505,95 +2520,95 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like string with minLength',
+    "no type like string with minLength",
     {
-      noTypeLikeStringMinLength: 'a',
+      noTypeLikeStringMinLength: "a",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like string with maxLength',
+    "no type like string with maxLength",
     {
-      noTypeLikeStringMaxLength: 'aaa',
+      noTypeLikeStringMaxLength: "aaa",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'minLength with type string',
+    "minLength with type string",
     {
-      stringWithMinLength: 'a',
+      stringWithMinLength: "a",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'maxLength with type string',
+    "maxLength with type string",
     {
-      stringWithMaxLength: 'aaa',
+      stringWithMaxLength: "aaa",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like string with pattern',
+    "no type like string with pattern",
     {
-      noTypeLikeStringPattern: 'def',
+      noTypeLikeStringPattern: "def",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'pattern with type string',
+    "pattern with type string",
     {
-      patternWithStringType: 'def',
+      patternWithStringType: "def",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like string with format',
+    "no type like string with format",
     {
-      noTypeLikeStringFormat: 'abc',
+      noTypeLikeStringFormat: "abc",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'format with type string',
+    "format with type string",
     {
-      stringWithFormat: 'abc',
+      stringWithFormat: "abc",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like string with formatMaximum',
+    "no type like string with formatMaximum",
     {
-      noTypeLikeStringFormatMaximum: '2016-02-06',
+      noTypeLikeStringFormatMaximum: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'formatMaximum with type string',
+    "formatMaximum with type string",
     {
-      stringWithFormatMaximum: '2016-02-06',
+      stringWithFormatMaximum: "2016-02-06",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'multiple instanceof ',
+    "multiple instanceof ",
     {
-      multipleInstanceof: 'test',
+      multipleInstanceof: "test",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like object with patternRequired',
+    "no type like object with patternRequired",
     {
       noTypeLikeObjectPatternRequired: { bar: 2 },
     },
@@ -2601,7 +2616,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'patternRequired with type object',
+    "patternRequired with type object",
     {
       objectWithPatternRequired: { bar: 2 },
     },
@@ -2609,15 +2624,15 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like string with minLength equals 1',
+    "no type like string with minLength equals 1",
     {
-      noTypeLikeStringMinLength1: '',
+      noTypeLikeStringMinLength1: "",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like array with minItems equals 1',
+    "no type like array with minItems equals 1",
     {
       noTypeLikeArrayMinItems1: [],
     },
@@ -2625,7 +2640,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like array with minItems',
+    "no type like array with minItems",
     {
       noTypeLikeArrayMinItems: [],
     },
@@ -2633,7 +2648,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array with minItems',
+    "array with minItems",
     {
       arrayWithMinItems: [],
     },
@@ -2641,7 +2656,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like array with minItems',
+    "no type like array with minItems",
     {
       noTypeMinProperties: {},
     },
@@ -2649,7 +2664,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like array with minItems',
+    "no type like array with minItems",
     {
       noTypeMinProperties1: {},
     },
@@ -2657,7 +2672,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like array with minItems',
+    "no type like array with minItems",
     {
       objectMinProperties: {},
     },
@@ -2665,7 +2680,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like array with maxItems',
+    "no type like array with maxItems",
     {
       noTypeLikeArrayMaxItems: [1, 2, 3, 4],
     },
@@ -2673,7 +2688,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'array with maxItems',
+    "array with maxItems",
     {
       arrayMaxItems: [1, 2, 3, 4],
     },
@@ -2681,7 +2696,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like object with maxProperties',
+    "no type like object with maxProperties",
     {
       noTypeLikeObjectMaxProperties: { a: 1, b: 2, c: 3 },
     },
@@ -2689,7 +2704,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object with maxProperties',
+    "object with maxProperties",
     {
       objectMaxProperties: { a: 1, b: 2, c: 3 },
     },
@@ -2697,7 +2712,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like object with maxProperties',
+    "no type like object with maxProperties",
     {
       noTypeLikeArrayUniqueItems: [1, 2, 1],
     },
@@ -2705,7 +2720,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object with maxProperties',
+    "object with maxProperties",
     {
       arrayWithUniqueItems: [1, 2, 1],
     },
@@ -2713,39 +2728,39 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like array with additionalItems',
+    "no type like array with additionalItems",
     {
-      noTypeLikeArrayAdditionalItems: [1, 1, 'foo'],
+      noTypeLikeArrayAdditionalItems: [1, 1, "foo"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array with additionalItems',
+    "array with additionalItems",
     {
-      arrayWithAdditionalItems: [1, 1, 'foo'],
+      arrayWithAdditionalItems: [1, 1, "foo"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like array with contains',
+    "no type like array with contains",
     {
-      noTypeLikeArrayContains: ['foo', 'bar'],
+      noTypeLikeArrayContains: ["foo", "bar"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'array with contains',
+    "array with contains",
     {
-      arrayWithContains: ['foo', 'bar'],
+      arrayWithContains: ["foo", "bar"],
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'anyOf with item without type',
+    "anyOf with item without type",
     {
       anyOfNoTypeInItem: 4.5,
     },
@@ -2753,7 +2768,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'oneOf with item without type',
+    "oneOf with item without type",
     {
       oneOfNoTypeInItem: 4.5,
     },
@@ -2761,23 +2776,23 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like object propertyNames',
+    "no type like object propertyNames",
     {
-      noTypeLikeObjectPropertyNames: { foo: 'any value' },
+      noTypeLikeObjectPropertyNames: { foo: "any value" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'object dependencies',
+    "object dependencies",
     {
-      objectPropertyNames: { foo: 'any value' },
+      objectPropertyNames: { foo: "any value" },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'no type like object dependencies',
+    "no type like object dependencies",
     {
       noTypeLikeObjectDependencies: { foo: 1, baz: 3 },
     },
@@ -2785,7 +2800,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'object dependencies',
+    "object dependencies",
     {
       objectWithDependencies: { foo: 1, baz: 3 },
     },
@@ -2793,7 +2808,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like object additionalProperties',
+    "no type like object additionalProperties",
     {
       noTypeLikeObjectAdditionalProperties: { foo: 1, baz: 3 },
     },
@@ -2801,7 +2816,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'no type like object required',
+    "no type like object required",
     {
       noTypeLikeObjectRequired: {},
     },
@@ -2809,7 +2824,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    '$data',
+    "$data",
     {
       dollarData: {
         smaller: 5,
@@ -2820,98 +2835,98 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    '$data #2',
+    "$data #2",
     {
       dollarData2: {
-        'date-time': '1',
-        email: 'joe.bloggs@example.com',
+        "date-time": "1",
+        email: "joe.bloggs@example.com",
       },
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'enum nested',
+    "enum nested",
     {
-      enumNested: 'string',
+      enumNested: "string",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'absolute path',
+    "absolute path",
     {
-      testAbsolutePath: 'bar',
+      testAbsolutePath: "bar",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'absolute path #1',
+    "absolute path #1",
     {
-      testAbsolutePath: 'bar\\\\baz',
+      testAbsolutePath: "bar\\\\baz",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'absolute path #2',
+    "absolute path #2",
     {
-      testAbsolutePath: 'bar/baz',
+      testAbsolutePath: "bar/baz",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'absolute path #3',
+    "absolute path #3",
     {
-      testAbsolutePath: '.',
+      testAbsolutePath: ".",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'absolute path #4',
+    "absolute path #4",
     {
-      testAbsolutePath: '..',
+      testAbsolutePath: "..",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'not empty string #1',
+    "not empty string #1",
     {
-      notEmptyString: '',
+      notEmptyString: "",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'not empty string #2',
+    "not empty string #2",
     {
-      notEmptyString2: '',
+      notEmptyString2: "",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'empty string #1',
+    "empty string #1",
     {
-      emptyString: '1',
+      emptyString: "1",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'empty string #2',
+    "empty string #2",
     {
-      emptyString2: '1',
+      emptyString2: "1",
     },
     (msg) => expect(msg).toMatchSnapshot()
   );
 
   createFailedTestCase(
-    'integer with not minimum and maximum',
+    "integer with not minimum and maximum",
     {
       integerWithNotMinMax: 10,
     },
@@ -2919,7 +2934,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer with not minimum',
+    "integer with not minimum",
     {
       integerNotWithMinimum: 5,
     },
@@ -2927,7 +2942,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer zero',
+    "integer zero",
     {
       integerZero: 1,
     },
@@ -2935,7 +2950,7 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'integer not zero',
+    "integer not zero",
     {
       integerNotZero: 0,
     },
@@ -2943,10 +2958,17 @@ describe('Validation', () => {
   );
 
   createFailedTestCase(
-    'several not in number type',
+    "several not in number type",
     {
       notMultipleOf: 5,
     },
     (msg) => expect(msg).toMatchSnapshot()
+  );
+
+  createSuccessTestCase(
+    "webpack schema",
+    { mode: "development" },
+    {},
+    webpackSchema
   );
 });
