@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.0](https://github.com/webpack/schema-utils/compare/v4.1.0...v4.2.0) (2023-06-14)
+
+
+### Features
+
+* added API to disable and enable validation ([#180](https://github.com/webpack/schema-utils/issues/180)) ([d6b9c9e](https://github.com/webpack/schema-utils/commit/d6b9c9e14bc5304f28f713b3bbf0497461bb117e))
+
+
+### Bug Fixes
+
+* lazy loading some modules ([#178](https://github.com/webpack/schema-utils/issues/178)) ([3806c65](https://github.com/webpack/schema-utils/commit/3806c65167f880051a331b8b728ea03ad0632840))
+
+## [4.1.0](https://github.com/webpack/schema-utils/compare/v4.0.1...v4.1.0) (2023-06-07)
+
+
+### Features
+
+* implement `undefinedAsNull` keyword for `enum` type ([#175](https://github.com/webpack/schema-utils/issues/175)) ([1265eac](https://github.com/webpack/schema-utils/commit/1265eac8621cddf2f4dad342efc2d76a169912f7))
+
+### [4.0.1](https://github.com/webpack/schema-utils/compare/v4.0.0...v4.0.1) (2023-04-15)
+
+### Bug Fixes
+
+* (perf) improved initial start time
+
+## [4.0.0](https://github.com/webpack/schema-utils/compare/v3.1.1...v4.0.0) (2021-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* minimum supported `Node.js` version is `>= 12.13.0`
+* update `ajv` to `8.8.0` version, please read [internal changes](https://github.com/ajv-validator/ajv/releases), `postFormatter` require attention due some properties were changed
+* logic for `formatExclusiveMaximum` and `formatExclusiveMinimum` was changed (due usage `ajv-formats` package)
+
 ### [3.1.1](https://github.com/webpack/schema-utils/compare/v3.1.0...v3.1.1) (2021-07-19)
 
 

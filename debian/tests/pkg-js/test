@@ -1,1 +1,1 @@
-jest --ci test/
+jest -u --ci test/

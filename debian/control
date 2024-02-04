@@ -8,8 +8,8 @@ Build-Depends:
  debhelper-compat (= 13)
  , dh-sequence-nodejs
  , jest (>= 29) <!nocheck>
- , node-ajv (>= 6.1~)
- , node-ajv-keywords (>= 3.1~) <!nocheck>
+ , node-ajv (>= 8~)
+ , node-ajv-keywords (>= 5~)
  , node-babel7
  , node-dot
  , node-fast-deep-equal
@@ -19,7 +19,7 @@ Build-Depends:
  , node-uri-js
  , node-typescript
  , webpack <!nocheck>
-Standards-Version: 4.6.0
+Standards-Version: 4.6.2
 Vcs-Browser: https://salsa.debian.org/js-team/node-schema-utils
 Vcs-Git: https://salsa.debian.org/js-team/node-schema-utils.git
 Homepage: https://github.com/webpack-contrib/schema-utils#readme
@@ -29,8 +29,8 @@ Package: node-schema-utils
 Architecture: all
 Depends:
  ${misc:Depends}
- , node-ajv (>= 6.1~)
- , node-ajv-keywords (>= 3.1~)
+ , node-ajv (>= 8~)
+ , node-ajv-keywords (>= 5~)
 Breaks: node-babel-loader (<< 8.2.1~)
  , node-compression-webpack-plugin (<< 3.0.1-2~)
  , node-css-loader (<< 3.2.1+~)
