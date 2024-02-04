@@ -1,3 +1,44 @@
+node-schema-utils (4.2.0~ds-3) unstable; urgency=medium
+
+  * Team upload
+  * Source-only upload
+
+ -- Yadd <yadd@debian.org>  Thu, 14 Dec 2023 19:21:24 +0400
+
+node-schema-utils (4.2.0~ds-2) unstable; urgency=medium
+
+  * Team upload
+  * Back to unstable
+
+ -- Yadd <yadd@debian.org>  Thu, 14 Dec 2023 11:56:51 +0400
+
+node-schema-utils (4.2.0~ds-1) experimental; urgency=medium
+
+  * Team upload
+  * Declare compliance with policy 4.6.2
+  * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository-Browse
+  * New upstream version 4.2.0~ds
+  * Drop tsc patch
+
+ -- Yadd <yadd@debian.org>  Thu, 07 Dec 2023 12:33:56 +0400
+
+node-schema-utils (4.0.0~ds-2) experimental; urgency=medium
+
+  * Team upload
+  * Update standards version to 4.6.1, no changes needed.
+  * Fix autopkgtest
+
+ -- Yadd <yadd@debian.org>  Fri, 18 Nov 2022 12:13:36 +0100
+
+node-schema-utils (4.0.0~ds-1) experimental; urgency=medium
+
+  * Team upload
+  * New upstream version 4.0.0~ds
+  * Require node-ajv ≥ 8 and node-ajv-keywords ≥ 5
+  * Update build
+
+ -- Yadd <yadd@debian.org>  Wed, 24 Nov 2021 12:51:03 +0100
+
 node-schema-utils (3.1.1~ds-2) unstable; urgency=medium
 
   * Team upload

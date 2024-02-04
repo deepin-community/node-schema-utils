@@ -1,10 +1,42 @@
-import addAbsolutePathKeyword from "./keywords/absolutePath";
-
 import ValidationError from "./ValidationError";
+import memoize from "./util/memorize";
 
-// Use CommonJS require for ajv libs so TypeScript consumers aren't locked into esModuleInterop (see #110).
-const Ajv = require("ajv");
-const ajvKeywords = require("ajv-keywords");
+const getAjv = memoize(() => {
+  // Use CommonJS require for ajv libs so TypeScript consumers aren't locked into esModuleInterop (see #110).
+  // eslint-disable-next-line global-require
+  const Ajv = require("ajv").default;
+  // eslint-disable-next-line global-require
+  const ajvKeywords = require("ajv-keywords").default;
+  // eslint-disable-next-line global-require
+  const addFormats = require("ajv-formats").default;
+
+  /**
+   * @type {Ajv}
+   */
+  const ajv = new Ajv({
+    strict: false,
+    allErrors: true,
+    verbose: true,
+    $data: true,
+  });
+
+  ajvKeywords(ajv, ["instanceof", "patternRequired"]);
+  addFormats(ajv, { keywords: true });
+
+  // Custom keywords
+  // eslint-disable-next-line global-require
+  const addAbsolutePathKeyword = require("./keywords/absolutePath").default;
+
+  addAbsolutePathKeyword(ajv);
+
+  const addUndefinedAsNullKeyword =
+    // eslint-disable-next-line global-require
+    require("./keywords/undefinedAsNull").default;
+
+  addUndefinedAsNullKeyword(ajv);
+
+  return ajv;
+});
 
 /** @typedef {import("json-schema").JSONSchema4} JSONSchema4 */
 /** @typedef {import("json-schema").JSONSchema6} JSONSchema6 */
@@ -13,16 +45,17 @@ const ajvKeywords = require("ajv-keywords");
 
 /**
  * @typedef {Object} Extend
- * @property {number=} formatMinimum
- * @property {number=} formatMaximum
- * @property {boolean=} formatExclusiveMinimum
- * @property {boolean=} formatExclusiveMaximum
+ * @property {string=} formatMinimum
+ * @property {string=} formatMaximum
+ * @property {string=} formatExclusiveMinimum
+ * @property {string=} formatExclusiveMaximum
  * @property {string=} link
+ * @property {boolean=} undefinedAsNull
  */
 
 /** @typedef {(JSONSchema4 | JSONSchema6 | JSONSchema7) & Extend} Schema */
 
-/** @typedef {ErrorObject & { children?: Array<ErrorObject>}} SchemaUtilErrorObject */
+/** @typedef {ErrorObject & { children?: Array<ErrorObject> }} SchemaUtilErrorObject */
 
 /**
  * @callback PostFormatter
@@ -38,21 +71,66 @@ const ajvKeywords = require("ajv-keywords");
  * @property {PostFormatter=} postFormatter
  */
 
-const ajv = new Ajv({
-  allErrors: true,
-  verbose: true,
-  $data: true,
-});
+/**
+ * @param {SchemaUtilErrorObject} error
+ * @param {number} idx
+ * @returns {SchemaUtilErrorObject}
+ */
+function applyPrefix(error, idx) {
+  // eslint-disable-next-line no-param-reassign
+  error.instancePath = `[${idx}]${error.instancePath}`;
 
-ajvKeywords(ajv, [
-  "instanceof",
-  "formatMinimum",
-  "formatMaximum",
-  "patternRequired",
-]);
+  if (error.children) {
+    error.children.forEach((err) => applyPrefix(err, idx));
+  }
 
-// Custom keywords
-addAbsolutePathKeyword(ajv);
+  return error;
+}
+
+let skipValidation = false;
+
+// We use `process.env.SKIP_VALIDATION` because you can have multiple `schema-utils` with different version,
+// so we want to disable it globally, `process.env` doesn't supported by browsers, so we have the local `skipValidation` variables
+
+// Enable validation
+function enableValidation() {
+  skipValidation = false;
+
+  // Disable validation for any versions
+  if (process && process.env) {
+    process.env.SKIP_VALIDATION = "n";
+  }
+}
+
+// Disable validation
+function disableValidation() {
+  skipValidation = true;
+
+  if (process && process.env) {
+    process.env.SKIP_VALIDATION = "y";
+  }
+}
+
+// Check if we need to confirm
+function needValidate() {
+  if (skipValidation) {
+    return false;
+  }
+
+  if (process && process.env && process.env.SKIP_VALIDATION) {
+    const value = process.env.SKIP_VALIDATION.trim();
+
+    if (/^(?:y|yes|true|1|on)$/i.test(value)) {
+      return false;
+    }
+
+    if (/^(?:n|no|false|0|off)$/i.test(value)) {
+      return true;
+    }
+  }
+
+  return true;
+}
 
 /**
  * @param {Schema} schema
@@ -61,34 +139,18 @@ addAbsolutePathKeyword(ajv);
  * @returns {void}
  */
 function validate(schema, options, configuration) {
+  if (!needValidate()) {
+    return;
+  }
+
   let errors = [];
 
   if (Array.isArray(options)) {
-    errors = Array.from(options, (nestedOptions) =>
-      validateObject(schema, nestedOptions)
-    );
-
-    errors.forEach((list, idx) => {
-      const applyPrefix =
-        /**
-         * @param {SchemaUtilErrorObject} error
-         */
-        (error) => {
-          // eslint-disable-next-line no-param-reassign
-          error.dataPath = `[${idx}]${error.dataPath}`;
-
-          if (error.children) {
-            error.children.forEach(applyPrefix);
-          }
-        };
-
-      list.forEach(applyPrefix);
-    });
-
-    errors = errors.reduce((arr, items) => {
-      arr.push(...items);
-      return arr;
-    }, []);
+    for (let i = 0; i <= options.length - 1; i++) {
+      errors.push(
+        ...validateObject(schema, options[i]).map((err) => applyPrefix(err, i))
+      );
+    }
   } else {
     errors = validateObject(schema, options);
   }
@@ -104,7 +166,8 @@ function validate(schema, options, configuration) {
  * @returns {Array<SchemaUtilErrorObject>}
  */
 function validateObject(schema, options) {
-  const compiledSchema = ajv.compile(schema);
+  // Not need to cache, because `ajv@8` has built-in cache
+  const compiledSchema = getAjv().compile(schema);
   const valid = compiledSchema(options);
 
   if (valid) return [];
@@ -121,12 +184,12 @@ function filterErrors(errors) {
   let newErrors = [];
 
   for (const error of /** @type {Array<SchemaUtilErrorObject>} */ (errors)) {
-    const { dataPath } = error;
+    const { instancePath } = error;
     /** @type {Array<SchemaUtilErrorObject>} */
     let children = [];
 
     newErrors = newErrors.filter((oldError) => {
-      if (oldError.dataPath.includes(dataPath)) {
+      if (oldError.instancePath.includes(instancePath)) {
         if (oldError.children) {
           children = children.concat(oldError.children.slice(0));
         }
@@ -151,4 +214,10 @@ function filterErrors(errors) {
   return newErrors;
 }
 
-export { validate, ValidationError };
+export {
+  validate,
+  enableValidation,
+  disableValidation,
+  needValidate,
+  ValidationError,
+};
